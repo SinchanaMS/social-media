@@ -11,12 +11,14 @@ import {
   Login,
   Signup,
 } from "pages/pages";
+import LandingPage from "pages/landingPage/LandingPage";
 
 export default function Router() {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route element={<RequiresAuth />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/profile/:profileID" element={<OtherProfile />} />

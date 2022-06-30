@@ -38,10 +38,14 @@ function App() {
   return (
     <div className="App">
       <Header />
-      {location.pathname !== "/login" && location.pathname !== "/signup" ? (
+      {location.pathname !== "/login" &&
+      location.pathname !== "/signup" &&
+      location.pathname !== "/" ? (
         <div className="flex min-h-screen justify-between bg-slate-100">
           <Sidebar />
-          <Router />
+          <div className="mx-auto w-full lg:ml-28 lg:mr-80 xl:ml-52 xl:mr-80">
+            <Router />
+          </div>
           <RightSideBar />
         </div>
       ) : (
