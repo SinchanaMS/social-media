@@ -33,7 +33,8 @@ export default function TextEditor() {
     setNewPost(initialPostState);
   };
 
-  const onEmojiClick = (event, emojiObject) => {
+  const onEmojiClick = (e, emojiObject) => {
+    e.preventDefault();
     setChosenEmoji(emojiObject);
   };
 
@@ -41,8 +42,7 @@ export default function TextEditor() {
     () => {
       setNewPost({
         ...newPost,
-        caption:
-          newPost.caption + (chosenEmoji ? chosenEmoji.emoji.toString() : ""),
+        caption: newPost.caption + (chosenEmoji ? chosenEmoji.emoji : ""),
       });
     },
     // eslint-disable-next-line
@@ -58,7 +58,7 @@ export default function TextEditor() {
   };
 
   return (
-    <div className="text-l mx-auto flex w-full flex-col gap-4 bg-gray-100 p-4">
+    <div className="text-l mx-auto flex w-[95%] flex-col gap-4 bg-gray-100 p-4 lg:mx-auto lg:w-[95%] xl:w-[95%] ">
       <form
         className="mx-auto w-full max-w-3xl bg-gray-50 shadow-md"
         onSubmit={(e) => submitHandler(e)}
@@ -80,7 +80,10 @@ export default function TextEditor() {
         )}
         <div className="flex items-center justify-between px-3 py-2">
           <div className="flex gap-4">
-            <label htmlFor="post-image" className="text-2xl text-gray-500">
+            <label
+              htmlFor="post-image"
+              className="text-2xl text-gray-500 hover:cursor-pointer hover:text-gray-600"
+            >
               <input
                 type="file"
                 id="post-image"
@@ -92,14 +95,18 @@ export default function TextEditor() {
               <RiImageAddFill />
             </label>
             <div
-              className="relative text-gray-500"
-              onClick={(e) => setShowEmojis((prev) => !prev)}
+              className="relative text-gray-500 hover:cursor-pointer hover:text-gray-600"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowEmojis((prev) => !prev);
+              }}
             >
               <RiEmotionLaughLine className="text-2xl" />
               {showEmojis && (
                 <div className="emojipicker absolute z-10">
                   <EmojiPicker
                     onEmojiClick={onEmojiClick}
+                    disableSearchBar={true}
                     pickerStyle={{ height: "220px" }}
                   />
                 </div>
@@ -107,7 +114,7 @@ export default function TextEditor() {
             </div>
           </div>
 
-          <button className="rounded-md border-none bg-blue-500 px-4 py-1 text-base text-gray-100 shadow-md">
+          <button className="rounded-md border-none bg-blue-500 px-4 py-1 text-base text-gray-100 shadow-md hover:cursor-pointer hover:brightness-95">
             Post
           </button>
         </div>

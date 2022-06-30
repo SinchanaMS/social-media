@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiEdit3, FiTrash, FiCheck, FiHeart } from "react-icons/fi";
-import { RiInboxArchiveLine, RiInboxUnarchiveLine } from "react-icons/ri";
+import {
+  RiEmotionLaughLine,
+  RiInboxArchiveLine,
+  RiInboxUnarchiveLine,
+} from "react-icons/ri";
 import { auth } from "../firebase/firebase";
 import { Comment } from "./components";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
+import EmojiPicker from "emoji-picker-react";
 import {
   archivePost,
   bookmarkPost,
@@ -32,6 +37,10 @@ export default function Post({ post }) {
   const [enableEdit, setEnableEdit] = useState(false);
   const [enableComments, setEnableComments] = useState(false);
   const [comment, setComment] = useState("");
+  const [showEmojis, setShowEmojis] = useState(false);
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const location = useLocation();
+  const currentPath = location.pathname;
   const [updatePost, setUpdatePost] = useState({
     caption: post?.caption,
     imageURL: post?.imageURL,
@@ -79,16 +88,36 @@ export default function Post({ post }) {
       : bookmarkPost(post, currentUser);
   };
 
+  const onEmojiClick = (event, emojiObject) => {
+    setChosenEmoji(emojiObject);
+  };
+
+  useEffect(
+    () => {
+      setUpdatePost({
+        ...updatePost,
+        caption:
+          updatePost.caption +
+          (chosenEmoji ? chosenEmoji.emoji.toString() : ""),
+      });
+    },
+    // eslint-disable-next-line
+    [chosenEmoji]
+  );
+
   return (
-    <div className="relative mx-auto mt-2 mb-8 flex h-fit w-full min-w-[20rem] max-w-[90%] flex-col rounded-lg bg-gray-50 p-4 shadow-md sm:w-3/4 md:mx-auto md:w-3/4 lg:w-full">
+    <div className="relative mx-auto mt-2 mb-8 flex h-fit w-full min-w-[20rem] max-w-[90%] flex-col gap-3 rounded-lg bg-gray-50 p-4 shadow-md sm:w-3/4 md:mx-auto md:w-3/4 lg:w-[80%]">
       <Link to={`/profile/${post.uid}`}>
-        <header className="flex items-center gap-2">
+        <header className="flex items-center gap-2 ">
           <img
             src={allUsers?.find((user) => user.userID === post?.uid)?.avatar}
             alt="user-dp"
             className="aspect-square h-9 w-fit rounded-full object-cover "
           />
-          <p className="font-semibold">{post?.author}</p>
+          <div className="flex w-full flex-col  justify-between">
+            <p className="font-semibold">{post?.author}</p>
+            <p className="text-xs text-gray-600">{post?.createdAt}</p>
+          </div>
         </header>
       </Link>
 
@@ -101,27 +130,44 @@ export default function Post({ post }) {
               setUpdatePost((prev) => ({ ...prev, caption: e.target.value }))
             }
           />
-          <label
-            htmlFor="avatar"
-            className="mr-5 mt-3 self-end rounded-md bg-slate-100 px-2 py-1 text-sm shadow-sm hover:cursor-pointer hover:brightness-95"
-          >
-            <input
-              type="file"
-              id="avatar"
-              name="avatar"
-              accept="image/*, .gif"
-              className="hidden"
-              onChange={handlePostImage}
-            />
-            Add/Edit Image
-          </label>
-          {updatePost?.imageURL && (
-            <img
-              src={updatePost?.imageURL}
-              alt="post-one"
-              className="mx-auto mt-2 aspect-auto max-h-96"
-            />
-          )}
+          <div className="my-2 flex self-end">
+            <div
+              className="relative self-end rounded-md bg-slate-100 px-2 py-1 text-sm text-gray-500 shadow-sm hover:cursor-pointer hover:text-gray-700"
+              onClick={(e) => setShowEmojis((prev) => !prev)}
+            >
+              <RiEmotionLaughLine className="text-xl " />
+              {showEmojis && (
+                <div className="emojipicker absolute top-8 right-0 z-30">
+                  <EmojiPicker
+                    onEmojiClick={onEmojiClick}
+                    pickerStyle={{ height: "220px" }}
+                  />
+                </div>
+              )}
+            </div>
+            <label
+              htmlFor="avatar"
+              className="mx-2 self-end rounded-md bg-slate-100 px-2 py-1 text-sm font-semibold text-gray-500 shadow-sm hover:cursor-pointer hover:text-gray-700"
+            >
+              <input
+                type="file"
+                id="avatar"
+                name="avatar"
+                accept="image/*, .gif"
+                className="hidden"
+                onChange={handlePostImage}
+              />
+              Add/Edit Image
+            </label>
+            </div>
+            {updatePost?.imageURL && (
+              <img
+                src={updatePost?.imageURL}
+                alt="post-one"
+                className="mx-auto mt-2 aspect-auto max-h-96"
+              />
+            )}
+          
         </div>
       ) : (
         <div>
@@ -137,29 +183,33 @@ export default function Post({ post }) {
       )}
 
       {post.uid === currentUser?.uid && (
-        <div className="absolute top-5 right-5 flex gap-4 text-gray-600">
+        <div className="absolute top-5 right-4 flex gap-4 text-gray-600">
           {enableEdit ? (
             <button
-              className="rounded-full border-none bg-slate-100 p-1.5 text-gray-500 shadow-md hover:cursor-pointer hover:brightness-95 "
+              className="rounded-full border-none bg-slate-100 py-1.5 px-2 text-gray-500 shadow-md hover:cursor-pointer hover:brightness-95 "
               onClick={() => editPostHandler(post, updatePost)}
             >
               <FiCheck />
             </button>
           ) : (
+            currentPath !== "/archives" &&
+            currentPath !== "/bookmarks" && (
+              <button
+                className="rounded-full border-none bg-slate-100  py-1.5 px-2 text-gray-500 shadow-md hover:cursor-pointer hover:brightness-95 "
+                onClick={() => setEnableEdit((prev) => !prev)}
+              >
+                <FiEdit3 />
+              </button>
+            )
+          )}
+          {currentPath !== "/archives" && currentPath !== "/bookmarks" && (
             <button
-              className="rounded-full border-none bg-slate-100 p-1.5 text-gray-500 shadow-md hover:cursor-pointer hover:brightness-95 "
-              onClick={() => setEnableEdit((prev) => !prev)}
+              className="rounded-full border-none bg-slate-100 py-1.5 px-2 text-gray-500 shadow-md hover:cursor-pointer hover:brightness-95 "
+              onClick={() => deletePost(post)}
             >
-              <FiEdit3 />
+              <FiTrash />
             </button>
           )}
-
-          <button
-            className="rounded-full border-none bg-slate-100 p-1.5 text-gray-500 shadow-md hover:cursor-pointer hover:brightness-95 "
-            onClick={() => deletePost(post)}
-          >
-            <FiTrash />
-          </button>
           <button
             className="rounded-full border-none bg-slate-100 p-1.5 text-gray-500 shadow-md hover:cursor-pointer hover:brightness-95 "
             onClick={() => toggleArchive(post)}
