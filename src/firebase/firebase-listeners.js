@@ -5,6 +5,7 @@ import {
   login,
   logout,
   setArchive,
+  setFollowers,
   setFollowing,
 } from "features/user/userSlice";
 import { onAuthStateChanged } from "firebase/auth";
@@ -81,6 +82,17 @@ const followingListener = (dispatch, userID) => {
   }
 };
 
+const followersListener = (dispatch, userID) => {
+  try {
+    onSnapshot(doc(db, "users", userID), (doc) => {
+      const followers = doc.data().followers;
+      dispatch(setFollowers(followers));
+    });
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
 const archivesListener = (dispatch, userID) => {
   try {
     onSnapshot(doc(db, "users", userID), (doc) => {
@@ -105,6 +117,7 @@ const bookmarksListener = (dispatch, userID) => {
 
 export const userDataListeners = (dispatch, userID) => {
   followingListener(dispatch, userID);
+  followersListener(dispatch, userID);
   archivesListener(dispatch, userID);
   bookmarksListener(dispatch, userID);
 };

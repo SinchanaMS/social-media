@@ -3,6 +3,8 @@ import { Post } from "components/components";
 import { useParams } from "react-router-dom";
 import { auth } from "../../firebase/firebase";
 import { followUser, unfollowUser } from "../../firebase/firebase-calls";
+import { useState } from "react";
+import FollowersModal from "components/FollowersModal";
 
 export default function OtherProfile() {
   const { profileID } = useParams();
@@ -10,7 +12,9 @@ export default function OtherProfile() {
   const { allUsers } = useSelector((state) => state.allUsers);
   const { allPosts } = useSelector((state) => state.allPosts);
   const otherUser = allUsers?.find((user) => user?.userID === profileID);
-
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
   const filteredPosts = allPosts?.filter(
     (post) => post.uid === otherUser?.userID
   );
@@ -24,8 +28,8 @@ export default function OtherProfile() {
       : followUser(currentUser, otherUser);
   };
   return (
-    <div className="ml-0 w-full pt-4 lg:ml-3">
-      <section className="relative h-72 w-full">
+    <div className="ml-0 flex w-full flex-col items-center pt-4 sm:ml-0 md:ml-0 lg:ml-1.5 lg:mr-0">
+      <section className="relative h-72 w-full lg:ml-8 lg:mr-6 lg:w-[95%] xl:ml-2 xl:mr-0.5 xl:w-[94%]">
         <img
           src={otherUser?.coverPic}
           alt="cover"
@@ -58,19 +62,47 @@ export default function OtherProfile() {
             )}
           </div>
           <div className="flex flex-wrap justify-center gap-1 px-2 text-slate-50 sm:gap-2 md:w-full md:justify-center md:gap-3 md:px-0 lg:scale-100 lg:gap-5">
-            <div className="rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-3 py-1">
+            <div
+              className="rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-3 py-1 hover:cursor-pointer"
+              onClick={() => {
+                setShowFollowersModal((prev) => !prev);
+                setShowFollowers(true);
+                setShowFollowing(false);
+              }}
+            >
               {otherUser?.followers?.length} Followers
             </div>
-            <div className="rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-3 py-1">
+            <div
+              className="rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-3 py-1 hover:cursor-pointer"
+              onClick={() => {
+                setShowFollowersModal((prev) => !prev);
+                setShowFollowing(true);
+                setShowFollowers(false);
+              }}
+            >
               {otherUser?.following?.length} Following
             </div>
-            <div className="rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-3 py-1">
+            <div className="rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 px-3 py-1 hover:cursor-default">
               {filteredPosts?.length} Posts
             </div>
           </div>
         </div>
       </section>
-      <ul className="mt-44 mb-16 sm:mb-24 md:mb-24 lg:mt-36 xl:mt-44">
+      {showFollowersModal && (
+        <div className="h-full">
+          <div className="fixed inset-0 z-10 flex h-screen w-full items-center justify-center bg-gray-900 opacity-70"></div>
+          <FollowersModal
+            setShowFollowersModal={setShowFollowersModal}
+            showFollowers={showFollowers}
+            setShowFollowers={setShowFollowers}
+            showFollowing={showFollowing}
+            setShowFollowing={setShowFollowing}
+            user={otherUser}
+            key={otherUser?.userID}
+          />
+        </div>
+      )}
+      <ul className="mt-44 mb-16 w-full sm:mb-24 md:mb-24 lg:mt-36 xl:mt-44">
         {filteredPosts?.map((post) => (
           <Post post={post} key={post.postID} />
         ))}
