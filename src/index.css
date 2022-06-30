@@ -11,13 +11,14 @@ body::-webkit-scrollbar {
 }
 
 .suggestions::-webkit-scrollbar,
-.rightsidebar::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   width: 7px;
+  height: 5px;
   background: transparent;
 }
 
 .suggestions::-webkit-scrollbar-thumb,
-.rightsidebar::-webkit-scrollbar-thumb {
-  background-color: #93c5fd;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #dee8f3;
   border-radius: 10px;
 }
