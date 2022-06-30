@@ -32,8 +32,8 @@ export const userLogin = async (
   lastLocation,
   navigate
 ) => {
+  const loader = toast.loading("Signing you in..");
   try {
-    const loader = toast.loading("Signing you in..");
     const userAuth = await signInWithEmailAndPassword(auth, email, password);
     dispatch(
       login({
@@ -49,8 +49,9 @@ export const userLogin = async (
     });
     navigate(lastLocation);
   } catch (error) {
-    toast.error("Couldn't log you in!");
-    console.log(error.message);
+    toast.error("Invalid credentials. Try again!", {
+      id: loader,
+    });
   }
 };
 
@@ -246,6 +247,7 @@ export const followUser = async (currentUser, userToFollow) => {
     toast.success(`You are now following ${userToFollow.displayName}`);
   } catch (error) {
     toast.error(`Couldn't follow ${userToFollow.displayName}. Try again!`);
+    console.log(error);
   }
 };
 
@@ -254,21 +256,22 @@ export const unfollowUser = async (currentUser, userToUnfollow) => {
     await setDoc(
       doc(collection(db, "users"), currentUser?.uid),
       {
-        following: arrayRemove(userToUnfollow.userID),
+        following: arrayRemove(userToUnfollow?.userID),
       },
       { merge: true }
     );
 
     await setDoc(
-      doc(collection(db, "users"), userToUnfollow.userID),
+      doc(collection(db, "users"), userToUnfollow?.userID),
       {
         followers: arrayRemove(currentUser?.uid),
       },
       { merge: true }
     );
-    toast.success(`Unfollowed ${userToUnfollow.displayName}`);
+    toast.success(`Unfollowed ${userToUnfollow?.displayName}`);
   } catch (error) {
-    toast.error(`Couldn't unfollow ${userToUnfollow.displayName}. Try again!`);
+    toast.error(`Couldn't unfollow ${userToUnfollow?.displayName}. Try again!`);
+    console.log(error);
   }
 };
 

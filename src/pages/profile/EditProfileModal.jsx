@@ -55,7 +55,7 @@ export default function EditProfileModal({
   }, [userData]);
 
   return (
-    <div className="fixed top-1/2 right-1/2 w-80 min-w-[20rem] max-w-[90%] translate-x-1/2 -translate-y-1/2 sm:w-3/4 md:bottom-0 md:w-2/3 md:-translate-y-3/4 lg:w-1/2">
+    <div className="fixed top-1/2 right-1/2 z-20 w-80 min-w-[20rem] max-w-[90%] translate-x-1/2 -translate-y-1/2 sm:w-3/4 md:bottom-0 md:w-2/3 md:-translate-y-3/4 lg:w-1/2">
       <form
         className="flex h-fit flex-col rounded-md bg-slate-200 p-4"
         onSubmit={updateUserData}

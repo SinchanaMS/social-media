@@ -11,7 +11,7 @@ import cover03 from "assets/cover_03.webp";
 import cover04 from "assets/cover_04.webp";
 
 export const navLinks = [
-  { pathTo: "/", icon: <AiFillHome />, navPath: "Home" },
+  { pathTo: "/home", icon: <AiFillHome />, navPath: "Home" },
   { pathTo: "/explore", icon: <AiFillCompass />, navPath: "Explore" },
   { pathTo: "/bookmarks", icon: <BsFillBookmarkFill />, navPath: "Bookmarks" },
   { pathTo: "/archives", icon: <RiInboxArchiveFill />, navPath: "Archives" },

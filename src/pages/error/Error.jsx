@@ -10,11 +10,11 @@ export default function Error() {
         className="max-h-[10rem] sm:max-h-[15rem] lg:max-h-[20rem]"
       />
       <div className="flex flex-col items-center gap-2">
-        <p to="/" className="text-xl lg:text-2xl xl:text-3xl">
+        <p to="/home" className="text-xl lg:text-2xl xl:text-3xl">
           Oops! Looks like you lost your way.
         </p>
         <Link
-          to="/"
+          to="/home"
           className="text-xl font-semibold text-blue-700 lg:text-2xl xl:text-3xl"
         >
           Go Home

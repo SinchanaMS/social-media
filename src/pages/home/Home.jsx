@@ -35,7 +35,7 @@ export default function Home() {
   const posts = sortHandler(filteredPosts);
 
   return (
-    <div className="flex w-full flex-col sm:mx-2 sm:gap-2 md:mx-2 md:gap-2">
+    <div className="flex w-full flex-col sm:gap-2 md:gap-2 lg:mx-2">
       <TextEditor />
       {posts?.length > 0 && (
         <select
@@ -51,9 +51,13 @@ export default function Home() {
 
       <div className="sm:mb-16 md:mb-16">
         {posts?.length > 0 ? (
-          posts?.map((post) => <Post post={post} key={post.postID} />)
+          <div className="flex flex-col ">
+            {posts?.map((post) => (
+              <Post post={post} key={post.postID} />
+            ))}
+          </div>
         ) : (
-          <div className="flex h-1/2 items-center pt-4">
+          <div className="flex h-1/2 items-center pt-24">
             <Empty />
           </div>
         )}
